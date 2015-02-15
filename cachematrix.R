@@ -5,7 +5,7 @@
 ## ----------------------------------------------------------------------------
 
 ## ----------------------------------------------------------------------------
-## Function makeCacheMatrix: Creates a cache matrix, using R's lexical scoping
+## Function makeCacheMatrix: Creates a cached matrix, using R's lexical scoping
 ## which allows functions to be "mutable". In this example, the mutable
 ## information is both the matrix and the its calculated and cached inversion.
 ## ----------------------------------------------------------------------------
@@ -56,17 +56,19 @@ makeCacheMatrix <- function(x = matrix()) {
         inverseMatrix
     }
     
-    # List of functions
+    # List of functions (i.e., the API)
     list(set = set, get = get,
          setInverse = setinverse,
          getInverse = getinverse)
 }
 
 
+## ----------------------------------------------------------------------------
 ## Function cacheSolve: solves a cached matrix. The function assumes
 ## that the passed in matrix was built using the above makeCacheMatrix
 ## "factory".
 ## TO DO: How does one check that the passed in variable is a cached matrix.
+## ----------------------------------------------------------------------------
 cacheSolve <- function(x, ...) {
     
     inverseFromCache <- x$getInverse()

@@ -1,7 +1,7 @@
 ## ----------------------------------------------------------------------------
-## A cached matrix is a square matrix that caches its calculated inversion
-## after it is calculated the first time. Subsequent reuest for its inversion
-## returns the cached inversion.
+## A "cached matrix" is a square matrix that caches its calculated inversion
+## after it is calculated the first time. Subsequent requests for its inversion
+## returns the cached inversed matrix.
 ## ----------------------------------------------------------------------------
 
 ## ----------------------------------------------------------------------------
@@ -21,11 +21,12 @@ makeCacheMatrix <- function(x = matrix()) {
         stop('Argument is not a square matrix')  
     }
         
-    # Cached matrix inverse
+    # Initialize the cached matrix inverse
     inverseMatrix <- NULL
     
-    # Set the matrix
+    # The "setter"
     set <- function(y) {
+        # Same arguments checks as above
         if (!is.matrix(y)) {
             stop('Argument is not a matrix!')
         }
@@ -35,28 +36,29 @@ makeCacheMatrix <- function(x = matrix()) {
         }
         
         # Mutate the free variables using the <<- operator 
-        # (Both 'x' and inverseMatrix are defined outside of this function).
+        # (Both 'x' and inverseMatrix are defined outside of this function, hence
+        # they are "free variables").
         x <<- y
         inverseMatrix <<- NULL
     }
     
-    # Get the matrix
+    # The "getter"
     get <- function() {
         x
     }
     
-    # Set the inverse
+    # Set the inversed matrix (to be cached)
     setinverse <- function(inverse) {        
         inverseMatrix <<- inverse
         message("Matrix inverse cached.")
     }
     
-    # Get the inverse
+    # Get the inversed matrix
     getinverse <- function() {
         inverseMatrix
     }
     
-    # List of functions (i.e., the API)
+    # List of functions (i.e., the cached matrix's API)
     list(set = set, get = get,
          setInverse = setinverse,
          getInverse = getinverse)
@@ -64,12 +66,13 @@ makeCacheMatrix <- function(x = matrix()) {
 
 
 ## ----------------------------------------------------------------------------
-## Function cacheSolve: solves a cached matrix. The function assumes
-## that the passed in matrix was built using the above makeCacheMatrix
-## "factory".
-## TO DO: How does one check that the passed in variable is a cached matrix.
+## Function cacheSolve: "solves" (matrix inverses) a cached matrix object.
 ## ----------------------------------------------------------------------------
 cacheSolve <- function(x, ...) {
+    # Attempt to check that 'x' is a cached matrix object
+    if (!is.list(x) || !identical(names(x), c('set', 'get', 'setInverse', 'getInverse'))) {
+        stop('Argument does not seem to be a cached matrix')
+    }
     
     inverseFromCache <- x$getInverse()
     if(!is.null(inverseFromCache)) {
